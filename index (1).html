@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusFlow — Stop Overthinking. Start Studying.</title>
+<meta name="description" content="The AI study assistant for university students in Madrid. Syncs with your calendar, breaks tasks into micro-steps, and blocks distractions.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0F;
+    --surface: #131320;
+    --surface-hover: #1a1a2e;
+    --accent: #6C5CE7;
+    --accent-glow: rgba(108, 92, 231, 0.3);
+    --accent-light: #A29BFE;
+    --warm: #FDCB6E;
+    --warm-glow: rgba(253, 203, 110, 0.2);
+    --text: #F0F0F5;
+    --text-muted: #8888A0;
+    --green: #00B894;
+    --red: #FF6B6B;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ========== LANGUAGE TOGGLE (top bar, no nav per wireframe) ========== */
+  .top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    backdrop-filter: blur(20px);
+    background: rgba(10, 10, 15, 0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 24px;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-dot {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent-glow);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+  }
+
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .social-icons a {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .social-icons a:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .lang-toggle {
+    display: flex;
+    background: var(--surface);
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+
+  .lang-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  /* ========== HERO (Headline + CTA + Video) ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 32px 80px;
+    position: relative;
+  }
+
+  .hero-bg-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+    top: 5%; right: 5%;
+    pointer-events: none;
+    animation: drift 8s ease-in-out infinite;
+  }
+
+  .hero-bg-glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--warm-glow), transparent 70%);
+    bottom: 15%; left: 3%;
+    pointer-events: none;
+    animation: drift 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -20px); }
+  }
+
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(44px, 5.5vw, 68px);
+    line-height: 1.08;
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-light);
+    position: relative;
+  }
+
+  .hero h1 em::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 460px;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  /* CTA: email collect */
+  .email-cta {
+    display: flex;
+    gap: 0;
+    max-width: 440px;
+    animation: fadeUp 0.8s ease 0.3s both;
+    border-radius: 100px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--surface);
+  }
+
+  .email-cta input {
+    flex: 1;
+    padding: 16px 24px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+
+  .email-cta input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .email-cta button {
+    padding: 16px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .email-cta button:hover {
+    background: #5b4bd6;
+  }
+
+  .email-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .platform-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    animation: fadeUp 0.8s ease 0.45s both;
+  }
+
+  .platform-tag {
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* VIDEO PLACEHOLDER */
+  .hero-video {
+    position: relative;
+    animation: fadeUp 1s ease 0.4s both;
+  }
+
+  .video-frame {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 40px var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .video-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(108,92,231,0.05), rgba(253,203,110,0.03));
+  }
+
+  .play-btn {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    box-shadow: 0 0 40px var(--accent-glow);
+    transition: all 0.3s;
+  }
+
+  .play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 60px var(--accent-glow);
+  }
+
+  .play-btn svg {
+    width: 28px; height: 28px;
+    fill: white;
+    margin-left: 4px;
+  }
+
+  .video-label {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--text-muted);
+    background: rgba(10,10,15,0.7);
+    padding: 6px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== SCREENSHOTS CAROUSEL ========== */
+  .screenshots {
+    padding: 100px 32px;
+    overflow: hidden;
+  }
+
+  .screenshots-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent-light);
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    text-align: center;
+    margin-bottom: 56px;
+    line-height: 1.15;
+  }
+
+  .screenshots-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0 30px;
+    scrollbar-width: none;
+  }
+
+  .screenshots-track::-webkit-scrollbar { display: none; }
+
+  .screenshot-card {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+
+  .screenshot-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(108,92,231,0.25);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  }
+
+  .screenshot-img {
+    width: 100%;
+    aspect-ratio: 9/16;
+    background: linear-gradient(180deg, var(--surface-hover), var(--surface));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .screenshot-mock {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .mock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .mock-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mock-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: rgba(108,92,231,0.15);
+    color: var(--accent-light);
+    font-weight: 600;
+  }
+
+  .mock-card {
+    background: rgba(108,92,231,0.08);
+    border: 1px solid rgba(108,92,231,0.15);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+
+  .mock-card-sm {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-light);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .mock-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .mock-card-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .mock-progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .mock-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--green);
+  }
+
+  .mock-timer {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .mock-timer-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-light);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .mock-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mock-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .mock-check {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+
+  .mock-check.done {
+    background: var(--green);
+    color: var(--bg);
+  }
+
+  .mock-check.pending {
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+
+  .mock-blocked {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .mock-blocked-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,107,107,0.06);
+    border: 1px solid rgba(255,107,107,0.12);
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .mock-blocked-icon {
+    font-size: 18px;
+  }
+
+  .mock-blocked-lock {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--red);
+  }
+
+  .screenshot-label {
+    padding: 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .scroll-hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+
+  /* ========== FEATURES ========== */
+  .features {
+    padding: 100px 32px;
+  }
+
+  .features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-card:hover {
+    border-color: rgba(108,92,231,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+
+  .feature-num {
+    display: inline-flex;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(108,92,231,0.12);
+    color: var(--accent-light);
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .feature-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ========== TESTIMONIALS ========== */
+  .testimonials {
+    padding: 100px 32px;
+  }
+
+  .testimonials-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .testimonial-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: all 0.4s;
+  }
+
+  .testimonial-card:hover {
+    border-color: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+  }
+
+  .testimonial-stars {
+    color: var(--warm);
+    font-size: 15px;
+    margin-bottom: 14px;
+    letter-spacing: 2px;
+  }
+
+  .testimonial-text {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-style: italic;
+    color: rgba(240,240,245,0.85);
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .testimonial-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .testimonial-name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .testimonial-role {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .uni-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+
+  .uni-logo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0.5;
+    letter-spacing: 1px;
+    transition: opacity 0.3s;
+  }
+
+  .uni-logo:hover { opacity: 0.8; }
+
+  /* ========== PRICING ========== */
+  .pricing {
+    padding: 100px 32px;
+  }
+
+  .pricing-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .pricing-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    position: relative;
+    transition: all 0.4s;
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+
+  .pricing-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px var(--accent-glow);
+  }
+
+  .pricing-card.edu {
+    border-color: var(--warm);
+    box-shadow: 0 0 30px var(--warm-glow);
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 18px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .pricing-badge.popular {
+    background: var(--accent);
+    color: white;
+  }
+
+  .pricing-badge.uni {
+    background: var(--warm);
+    color: var(--bg);
+  }
+
+  .pricing-tier {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .pricing-price {
+    font-family: 'Instrument Serif', serif;
+    font-size: 48px;
+    margin-bottom: 4px;
+  }
+
+  .pricing-price span {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .pricing-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .pricing-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .pricing-features li {
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  .pricing-features li .pf-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .pricing-features li.disabled {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .pricing-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    text-decoration: none;
+    border: none;
+  }
+
+  .pricing-btn.primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .pricing-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 30px var(--accent-glow);
+  }
+
+  .pricing-btn.outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .pricing-btn.outline:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .pricing-btn.edu-btn {
+    background: var(--warm);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .pricing-btn.edu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 30px var(--warm-glow);
+  }
+
+  .pricing-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 32px;
+    line-height: 1.6;
+  }
+
+  /* ========== BOTTOM CTA ========== */
+  .cta-section {
+    padding: 120px 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .cta-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .cta-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(36px, 4.5vw, 56px);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .cta-section h2 em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+
+  .cta-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+
+  .cta-email {
+    display: flex;
+    gap: 0;
+    max-width: 440px;
+    margin: 0 auto;
+    border-radius: 100px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--surface);
+  }
+
+  .cta-email input {
+    flex: 1;
+    padding: 16px 24px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+
+  .cta-email input::placeholder { color: var(--text-muted); }
+
+  .cta-email button {
+    padding: 16px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .cta-email button:hover { background: #5b4bd6; }
+
+  /* ========== FOOTER ========== */
+  footer {
+    padding: 48px 32px 32px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  footer .logo {
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .footer-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .footer-socials a {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .footer-socials a:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 48px; }
+    .hero-sub { margin: 0 auto 32px; }
+    .email-cta { margin: 0 auto; }
+    .email-note { text-align: center; }
+    .platform-tags { justify-content: center; }
+    .features-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .screenshot-card { flex: 0 0 220px; }
+  }
+
+  @media (max-width: 600px) {
+    .top-bar { padding: 12px 16px; }
+    .social-icons { display: none; }
+    .email-cta { flex-direction: column; border-radius: var(--radius); }
+    .email-cta input { text-align: center; }
+    .email-cta button { border-radius: 0 0 var(--radius) var(--radius); }
+    .cta-email { flex-direction: column; border-radius: var(--radius); }
+    .cta-email input { text-align: center; }
+    .cta-email button { border-radius: 0 0 var(--radius) var(--radius); }
+    .hero, .screenshots, .features, .testimonials, .cta-section { padding-left: 16px; padding-right: 16px; }
+  }
+
+  /* ========== HIDDEN LANG ========== */
+  [data-lang="es"] { display: none; }
+  body.lang-es [data-lang="en"] { display: none; }
+  body.lang-es [data-lang="es"] { display: block; }
+  body.lang-es span[data-lang="es"],
+  body.lang-es em[data-lang="es"] { display: inline; }
+</style>
+</head>
+<body>
+
+<!-- ========== TOP BAR (no nav per wireframe — just logo, socials, lang) ========== -->
+<div class="top-bar">
+  <a href="#" class="logo">
+    <span class="logo-dot"></span>
+    FocusFlow
+  </a>
+  <div class="top-right">
+    <div class="social-icons">
+      <a href="#" title="Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="#" title="TikTok">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.33-6.33V9.18a8.16 8.16 0 0 0 3.89.98V6.69z"/></svg>
+      </a>
+      <a href="#" title="LinkedIn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="mailto:focusflow@student.ie.edu" title="Email">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-bg-glow-2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <!-- ENGLISH -->
+      <div data-lang="en">
+        <h1>Stop overthinking.<br>Start <em>studying.</em></h1>
+        <p class="hero-sub">
+          FocusFlow syncs with your calendar, knows your deadlines, and gives you one small first step — so you go from overwhelmed to focused in under 60 seconds.
+        </p>
+      </div>
+      <!-- SPANISH -->
+      <div data-lang="es">
+        <h1>Deja de pensarlo.<br>Empieza a <em>estudiar.</em></h1>
+        <p class="hero-sub">
+          FocusFlow se sincroniza con tu calendario, conoce tus entregas y te da un primer paso concreto — para que pases de agobiado a concentrado en menos de 60 segundos.
+        </p>
+      </div>
+
+      <div class="email-cta">
+        <input type="email" id="hero-email" data-lang="en" placeholder="tu@universidad.es">
+        <input type="email" data-lang="es" placeholder="tu@universidad.es">
+        <button data-lang="en">Join Waitlist →</button>
+        <button data-lang="es">Únete a la lista →</button>
+      </div>
+      <p class="email-note">
+        <span data-lang="en">Free early access · iOS & Android · Launching Fall 2026</span>
+        <span data-lang="es">Acceso anticipado gratuito · iOS y Android · Lanzamiento otoño 2026</span>
+      </p>
+      <div class="platform-tags">
+        <span class="platform-tag">📅 Google Calendar</span>
+        <span class="platform-tag">🍎 Apple Calendar</span>
+        <span class="platform-tag">🔗 Any iCal link</span>
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="hero-video">
+      <div class="video-frame">
+        <div class="play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+        <span class="video-label" data-lang="en">Watch demo · Coming soon</span>
+        <span class="video-label" data-lang="es">Ver demo · Próximamente</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SCREENSHOTS ========== -->
+<section class="screenshots">
+  <div class="screenshots-inner">
+    <div class="section-tag" data-lang="en">In-App Preview</div>
+    <div class="section-tag" data-lang="es">Vista previa</div>
+    <h2 class="section-title">
+      <span data-lang="en">See FocusFlow in action</span>
+      <span data-lang="es">Mira FocusFlow en acción</span>
+    </h2>
+    <div class="screenshots-track">
+      <!-- Screen 1: Calendar Sync -->
+      <div class="screenshot-card">
+        <div class="screenshot-img">
+          <div class="screenshot-mock">
+            <div class="mock-header">
+              <span class="mock-title">📅 This Week</span>
+              <span class="mock-badge">Synced</span>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-sm">Due Tomorrow</div>
+              <div class="mock-card-title">Marketing Case Study</div>
+              <div class="mock-card-desc">2,000 words · IE Business</div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-sm">Due Friday</div>
+              <div class="mock-card-title">Econ Problem Set #4</div>
+              <div class="mock-card-desc">12 questions · UAM</div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-sm">Exam · April 22</div>
+              <div class="mock-card-title">Statistics Midterm</div>
+              <div class="mock-card-desc">Chapters 1–6 · UCM</div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-label">
+          <span data-lang="en">Calendar Sync</span>
+          <span data-lang="es">Sincronización</span>
+        </div>
+      </div>
+
+      <!-- Screen 2: AI First Step -->
+      <div class="screenshot-card">
+        <div class="screenshot-img">
+          <div class="screenshot-mock">
+            <div class="mock-header">
+              <span class="mock-title">🎯 Your Next Step</span>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-sm">✨ AI Suggested</div>
+              <div class="mock-card-title">Open the assignment brief</div>
+              <div class="mock-card-desc">Just read the first paragraph. That's it — nothing else.</div>
+            </div>
+            <div class="mock-timer">
+              <div class="mock-timer-circle">5:00</div>
+            </div>
+            <div style="text-align:center; font-size:12px; color:var(--text-muted);">
+              <span data-lang="en">Micro-task timer</span>
+              <span data-lang="es">Temporizador micro-tarea</span>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-label">
+          <span data-lang="en">AI First Step</span>
+          <span data-lang="es">Primer paso IA</span>
+        </div>
+      </div>
+
+      <!-- Screen 3: Focus Mode -->
+      <div class="screenshot-card">
+        <div class="screenshot-img">
+          <div class="screenshot-mock">
+            <div class="mock-header">
+              <span class="mock-title">🔒 Focus Mode</span>
+              <span class="mock-badge" style="background:rgba(255,107,107,0.15); color:var(--red);">Active</span>
+            </div>
+            <div class="mock-blocked">
+              <div class="mock-blocked-item">
+                <span class="mock-blocked-icon">📱</span>
+                <span>Instagram</span>
+                <span class="mock-blocked-lock">🔒</span>
+              </div>
+              <div class="mock-blocked-item">
+                <span class="mock-blocked-icon">🎵</span>
+                <span>TikTok</span>
+                <span class="mock-blocked-lock">🔒</span>
+              </div>
+              <div class="mock-blocked-item">
+                <span class="mock-blocked-icon">🐦</span>
+                <span>X (Twitter)</span>
+                <span class="mock-blocked-lock">🔒</span>
+              </div>
+            </div>
+            <div style="text-align:center; margin-top:20px; font-size:11px; color:var(--text-muted);">
+              <span data-lang="en">Complete 2 tasks to unlock</span>
+              <span data-lang="es">Completa 2 tareas para desbloquear</span>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-label">
+          <span data-lang="en">App Blocking</span>
+          <span data-lang="es">Bloqueo de apps</span>
+        </div>
+      </div>
+
+      <!-- Screen 4: Progress -->
+      <div class="screenshot-card">
+        <div class="screenshot-img">
+          <div class="screenshot-mock">
+            <div class="mock-header">
+              <span class="mock-title">📊 Today</span>
+            </div>
+            <div class="mock-list">
+              <div class="mock-list-item">
+                <span class="mock-check done">✓</span>
+                <span>Read assignment brief</span>
+              </div>
+              <div class="mock-list-item">
+                <span class="mock-check done">✓</span>
+                <span>Outline 3 key points</span>
+              </div>
+              <div class="mock-list-item">
+                <span class="mock-check done">✓</span>
+                <span>Write intro paragraph</span>
+              </div>
+              <div class="mock-list-item">
+                <span class="mock-check pending"></span>
+                <span style="color:var(--text-muted);">Draft section 2</span>
+              </div>
+            </div>
+            <div class="mock-progress-bar" style="margin-top:20px;">
+              <div class="mock-progress-fill" style="width:75%;"></div>
+            </div>
+            <div style="text-align:center; margin-top:8px; font-size:11px; color:var(--green);">75% done today 🔥</div>
+          </div>
+        </div>
+        <div class="screenshot-label">
+          <span data-lang="en">Progress Tracking</span>
+          <span data-lang="es">Seguimiento</span>
+        </div>
+      </div>
+
+      <!-- Screen 5: Streak -->
+      <div class="screenshot-card">
+        <div class="screenshot-img">
+          <div class="screenshot-mock">
+            <div class="mock-header">
+              <span class="mock-title">🏆 Streak</span>
+            </div>
+            <div style="text-align:center; padding: 20px 0;">
+              <div style="font-size:56px; font-family:'Instrument Serif',serif; color:var(--warm);">12</div>
+              <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+                <span data-lang="en">day streak 🔥</span>
+                <span data-lang="es">días seguidos 🔥</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap; padding:0 8px;">
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+            </div>
+            <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--text-muted);">
+              <span data-lang="en">Best: 18 days</span>
+              <span data-lang="es">Mejor: 18 días</span>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-label">
+          <span data-lang="en">Streaks & Rewards</span>
+          <span data-lang="es">Rachas y premios</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span data-lang="en">← Scroll to explore →</span>
+      <span data-lang="es">← Desliza para explorar →</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURES ========== -->
+<section class="features">
+  <div class="features-inner">
+    <div class="section-tag" data-lang="en">Features</div>
+    <div class="section-tag" data-lang="es">Funcionalidades</div>
+    <h2 class="section-title">
+      <span data-lang="en">Built to beat procrastination</span>
+      <span data-lang="es">Diseñado para vencer la procrastinación</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-num">1</div>
+        <h3 data-lang="en">Calendar Sync</h3>
+        <h3 data-lang="es">Sincronización</h3>
+        <p data-lang="en">Connects to Google Calendar, Apple Calendar, or any iCal link. It knows your classes, exams, and deadlines — so you don't have to think about what's next.</p>
+        <p data-lang="es">Se conecta con Google Calendar, Apple Calendar, o cualquier enlace iCal. Conoce tus clases, exámenes y entregas — para que no tengas que pensar qué hacer después.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">2</div>
+        <h3 data-lang="en">AI Micro-Tasks</h3>
+        <h3 data-lang="es">Micro-tareas IA</h3>
+        <p data-lang="en">Instead of "Write 3,000-word essay," you get: "Open the doc and read the brief." The AI breaks overwhelming work into steps so small you can't say no.</p>
+        <p data-lang="es">En vez de "Escribe un ensayo de 3.000 palabras," recibes: "Abre el documento y lee el enunciado." La IA divide el trabajo en pasos tan pequeños que no puedes decir que no.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">3</div>
+        <h3 data-lang="en">Smart App Blocking</h3>
+        <h3 data-lang="es">Bloqueo inteligente</h3>
+        <p data-lang="en">Locks distracting apps when you start a session. Complete micro-tasks to earn them back. Your phone works for you, not against you.</p>
+        <p data-lang="es">Bloquea apps que distraen cuando inicias una sesión. Completa micro-tareas para desbloquearlas. Tu móvil trabaja para ti, no en tu contra.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">4</div>
+        <h3 data-lang="en">Stress Reduction</h3>
+        <h3 data-lang="es">Reduce el estrés</h3>
+        <p data-lang="en">By giving you one clear step at a time, FocusFlow eliminates the overwhelm that keeps you stuck. Less anxiety, more progress.</p>
+        <p data-lang="es">Al darte un paso claro a la vez, FocusFlow elimina el agobio que te paraliza. Menos ansiedad, más progreso.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">5</div>
+        <h3 data-lang="en">Deadline-Aware AI</h3>
+        <h3 data-lang="es">IA consciente de plazos</h3>
+        <p data-lang="en">Prioritizes what matters most based on urgency and effort. Exams in 2 days? It surfaces that first. Assignment due next week? It plans ahead.</p>
+        <p data-lang="es">Prioriza lo más importante según urgencia y esfuerzo. ¿Examen en 2 días? Lo pone primero. ¿Entrega la semana que viene? Lo planifica con antelación.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">6</div>
+        <h3 data-lang="en">Streaks & Progress</h3>
+        <h3 data-lang="es">Rachas y progreso</h3>
+        <p data-lang="en">Build daily study streaks. See your progress bar grow in real-time. Small wins compound into serious momentum and lasting habits.</p>
+        <p data-lang="es">Construye rachas diarias de estudio. Ve tu barra de progreso crecer en tiempo real. Las pequeñas victorias generan impulso y hábitos duraderos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TESTIMONIALS ========== -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-tag" data-lang="en">What students say</div>
+    <div class="section-tag" data-lang="es">Lo que dicen los estudiantes</div>
+    <h2 class="section-title">
+      <span data-lang="en">Tested by students across Madrid</span>
+      <span data-lang="es">Probado por estudiantes de todo Madrid</span>
+    </h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-lang="en">"I used to spend 2 hours 'getting ready' to study. Now I open FocusFlow and I'm working within 30 seconds. The micro-tasks completely changed how I approach assignments."</p>
+        <p class="testimonial-text" data-lang="es">"Antes tardaba 2 horas en 'prepararme' para estudiar. Ahora abro FocusFlow y estoy trabajando en 30 segundos. Las micro-tareas cambiaron por completo cómo encaro los trabajos."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">M</div>
+          <div>
+            <div class="testimonial-name">María G.</div>
+            <div class="testimonial-role">BBA · IE University</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-lang="en">"The calendar sync is genius — it already knows my deadlines from Moodle exports. And the app blocking? I actually finish tasks faster because I want my apps back."</p>
+        <p class="testimonial-text" data-lang="es">"La sincronización con el calendario es genial — ya sabe mis entregas. Y el bloqueo de apps me hace terminar tareas más rápido porque quiero recuperar mis apps."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">C</div>
+          <div>
+            <div class="testimonial-name">Carlos P.</div>
+            <div class="testimonial-role">Economía · UCM</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-lang="en">"I always knew what I needed to do, I just couldn't start. FocusFlow takes away the decision fatigue and gives me the next step. My stress levels have dropped massively."</p>
+        <p class="testimonial-text" data-lang="es">"Siempre sabía lo que tenía que hacer, pero no podía empezar. FocusFlow elimina la fatiga de decisión y me da el siguiente paso. Mi nivel de estrés ha bajado muchísimo."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">L</div>
+          <div>
+            <div class="testimonial-name">Lucía R.</div>
+            <div class="testimonial-role">Derecho · UAM</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-lang="en">"My screen time went from 7 hours to 3. I'm sleeping better, my grades are up, and I finally feel in control of my time. Every student in Madrid needs this."</p>
+        <p class="testimonial-text" data-lang="es">"Mi tiempo de pantalla bajó de 7 a 3 horas. Duermo mejor, mis notas subieron y por fin siento que controlo mi tiempo. Todos los estudiantes de Madrid necesitan esto."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">A</div>
+          <div>
+            <div class="testimonial-name">Alejandro M.</div>
+            <div class="testimonial-role">Ingeniería · Carlos III</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uni-logos">
+      <span class="uni-logo">IE UNIVERSITY</span>
+      <span class="uni-logo">UCM</span>
+      <span class="uni-logo">UAM</span>
+      <span class="uni-logo">CARLOS III</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PRICING ========== -->
+<section class="pricing">
+  <div class="pricing-inner">
+    <div class="section-tag" data-lang="en">Pricing</div>
+    <div class="section-tag" data-lang="es">Precios</div>
+    <h2 class="section-title">
+      <span data-lang="en">A plan for every student</span>
+      <span data-lang="es">Un plan para cada estudiante</span>
+    </h2>
+    <div class="pricing-grid">
+
+      <!-- FREE -->
+      <div class="pricing-card">
+        <div class="pricing-tier">Free</div>
+        <div class="pricing-price">€0</div>
+        <p class="pricing-desc">
+          <span data-lang="en">Everything you need to start beating procrastination. Completely free, supported by ads.</span>
+          <span data-lang="es">Todo lo que necesitas para empezar a vencer la procrastinación. Totalmente gratis, con anuncios.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">AI micro-task breakdown</span><span data-lang="es">Desglose IA de micro-tareas</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Calendar sync (iCal)</span><span data-lang="es">Sincronización calendario (iCal)</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Basic app blocking</span><span data-lang="es">Bloqueo básico de apps</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Daily streaks & progress</span><span data-lang="es">Rachas diarias y progreso</span></li>
+          <li class="disabled"><span class="pf-icon">—</span> <span data-lang="en">Contains ads</span><span data-lang="es">Contiene anuncios</span></li>
+          <li class="disabled"><span class="pf-icon">—</span> <span data-lang="en">Limited AI suggestions/day</span><span data-lang="es">Sugerencias IA limitadas/día</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn outline">
+          <span data-lang="en">Get Started Free</span>
+          <span data-lang="es">Empieza gratis</span>
+        </a>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge popular">
+          <span data-lang="en">Most Popular</span>
+          <span data-lang="es">Más popular</span>
+        </div>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">€4.99<span>/mo</span></div>
+        <p class="pricing-desc">
+          <span data-lang="en">No ads, unlimited AI, and advanced features to maximize your focus and study performance.</span>
+          <span data-lang="es">Sin anuncios, IA ilimitada y funciones avanzadas para maximizar tu concentración y rendimiento.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Everything in Free</span><span data-lang="es">Todo lo de Free</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">No ads, ever</span><span data-lang="es">Sin anuncios, nunca</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Unlimited AI suggestions</span><span data-lang="es">Sugerencias IA ilimitadas</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Advanced app blocking schedules</span><span data-lang="es">Programación avanzada de bloqueo</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Peak productivity insights</span><span data-lang="es">Insights de productividad</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Priority support</span><span data-lang="es">Soporte prioritario</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn primary">
+          <span data-lang="en">Join Waitlist — Pro</span>
+          <span data-lang="es">Únete — Pro</span>
+        </a>
+      </div>
+
+      <!-- EDU -->
+      <div class="pricing-card edu">
+        <div class="pricing-badge uni">
+          <span data-lang="en">For Universities</span>
+          <span data-lang="es">Para universidades</span>
+        </div>
+        <div class="pricing-tier">Edu</div>
+        <div class="pricing-price" data-lang="en">Free<span> for students</span></div>
+        <div class="pricing-price" data-lang="es">Gratis<span> para alumnos</span></div>
+        <p class="pricing-desc">
+          <span data-lang="en">Premium experience covered by your university. Like ChatGPT Edu — but built for focus and study habits.</span>
+          <span data-lang="es">Experiencia premium cubierta por tu universidad. Como ChatGPT Edu — pero diseñado para concentración y hábitos de estudio.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Everything in Pro</span><span data-lang="es">Todo lo de Pro</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Direct Moodle / LMS sync</span><span data-lang="es">Sincronización directa con Moodle / LMS</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Course-specific AI coaching</span><span data-lang="es">Coaching IA por asignatura</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Exam prep mode</span><span data-lang="es">Modo preparación de exámenes</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">University wellbeing dashboard</span><span data-lang="es">Panel de bienestar universitario</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Paid by your institution</span><span data-lang="es">Lo paga tu institución</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn edu-btn">
+          <span data-lang="en">Ask Your University</span>
+          <span data-lang="es">Pídelo a tu universidad</span>
+        </a>
+      </div>
+
+    </div>
+    <p class="pricing-note">
+      <span data-lang="en">All plans include calendar sync, AI task breakdown, and app blocking. Edu pricing is negotiated directly with universities.</span>
+      <span data-lang="es">Todos los planes incluyen sincronización de calendario, desglose IA de tareas y bloqueo de apps. El precio Edu se negocia directamente con las universidades.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========== BOTTOM CTA ========== -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <div class="section-tag" data-lang="en">Launching Fall 2026</div>
+    <div class="section-tag" data-lang="es">Lanzamiento otoño 2026</div>
+    <h2>
+      <span data-lang="en">Ready to <em>actually</em> start studying?</span>
+      <span data-lang="es">¿Listo para <em>de verdad</em> empezar a estudiar?</span>
+    </h2>
+    <p class="cta-sub">
+      <span data-lang="en">Join the waitlist and be the first to try FocusFlow. Built by students at IE University who were tired of procrastinating too.</span>
+      <span data-lang="es">Únete a la lista de espera y sé el primero en probar FocusFlow. Creado por estudiantes de IE University que también estaban hartos de procrastinar.</span>
+    </p>
+    <div class="cta-email">
+      <input type="email" data-lang="en" placeholder="tu@universidad.es">
+      <input type="email" data-lang="es" placeholder="tu@universidad.es">
+      <button data-lang="en">Join Waitlist →</button>
+      <button data-lang="es">Únete →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="footer-inner">
+    <a href="#" class="logo">
+      <span class="logo-dot"></span>
+      FocusFlow
+    </a>
+    <p class="footer-text">
+      <span data-lang="en">Built with ♥ by Team 6 at IE University · Madrid</span>
+      <span data-lang="es">Hecho con ♥ por el Equipo 6 en IE University · Madrid</span>
+    </p>
+    <div class="footer-socials">
+      <a href="#" title="Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="#" title="TikTok">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.33-6.33V9.18a8.16 8.16 0 0 0 3.89.98V6.69z"/></svg>
+      </a>
+      <a href="#" title="LinkedIn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="mailto:focusflow@student.ie.edu" title="Email">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function setLang(lang) {
+  document.body.className = lang === 'es' ? 'lang-es' : '';
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === lang.toUpperCase());
+  });
+}
+</script>
+
+</body>
+</html>
