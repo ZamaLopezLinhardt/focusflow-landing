@@ -742,6 +742,187 @@
 
   .uni-logo:hover { opacity: 0.8; }
 
+  /* ========== PRICING ========== */
+  .pricing {
+    padding: 100px 32px;
+  }
+
+  .pricing-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .pricing-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    position: relative;
+    transition: all 0.4s;
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+
+  .pricing-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px var(--accent-glow);
+  }
+
+  .pricing-card.edu {
+    border-color: var(--warm);
+    box-shadow: 0 0 30px var(--warm-glow);
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 18px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .pricing-badge.popular {
+    background: var(--accent);
+    color: white;
+  }
+
+  .pricing-badge.uni {
+    background: var(--warm);
+    color: var(--bg);
+  }
+
+  .pricing-tier {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .pricing-price {
+    font-family: 'Instrument Serif', serif;
+    font-size: 48px;
+    margin-bottom: 4px;
+  }
+
+  .pricing-price span {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .pricing-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .pricing-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .pricing-features li {
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  .pricing-features li .pf-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .pricing-features li.disabled {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .pricing-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    text-decoration: none;
+    border: none;
+  }
+
+  .pricing-btn.primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .pricing-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 30px var(--accent-glow);
+  }
+
+  .pricing-btn.outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .pricing-btn.outline:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .pricing-btn.edu-btn {
+    background: var(--warm);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .pricing-btn.edu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 30px var(--warm-glow);
+  }
+
+  .pricing-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 32px;
+    line-height: 1.6;
+  }
+
   /* ========== BOTTOM CTA ========== */
   .cta-section {
     padding: 120px 32px;
@@ -878,6 +1059,7 @@
     .email-note { text-align: center; }
     .platform-tags { justify-content: center; }
     .features-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
     .testimonials-grid { grid-template-columns: 1fr; }
     .screenshot-card { flex: 0 0 220px; }
   }
@@ -1289,6 +1471,103 @@
       <span class="uni-logo">UAM</span>
       <span class="uni-logo">CARLOS III</span>
     </div>
+  </div>
+</section>
+
+<!-- ========== PRICING ========== -->
+<section class="pricing">
+  <div class="pricing-inner">
+    <div class="section-tag" data-lang="en">Pricing</div>
+    <div class="section-tag" data-lang="es">Precios</div>
+    <h2 class="section-title">
+      <span data-lang="en">A plan for every student</span>
+      <span data-lang="es">Un plan para cada estudiante</span>
+    </h2>
+    <div class="pricing-grid">
+
+      <!-- FREE -->
+      <div class="pricing-card">
+        <div class="pricing-tier">Free</div>
+        <div class="pricing-price">€0</div>
+        <p class="pricing-desc">
+          <span data-lang="en">Everything you need to start beating procrastination. Completely free, supported by ads.</span>
+          <span data-lang="es">Todo lo que necesitas para empezar a vencer la procrastinación. Totalmente gratis, con anuncios.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">AI micro-task breakdown</span><span data-lang="es">Desglose IA de micro-tareas</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Calendar sync (iCal)</span><span data-lang="es">Sincronización calendario (iCal)</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Basic app blocking</span><span data-lang="es">Bloqueo básico de apps</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Daily streaks & progress</span><span data-lang="es">Rachas diarias y progreso</span></li>
+          <li class="disabled"><span class="pf-icon">—</span> <span data-lang="en">Contains ads</span><span data-lang="es">Contiene anuncios</span></li>
+          <li class="disabled"><span class="pf-icon">—</span> <span data-lang="en">Limited AI suggestions/day</span><span data-lang="es">Sugerencias IA limitadas/día</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn outline">
+          <span data-lang="en">Get Started Free</span>
+          <span data-lang="es">Empieza gratis</span>
+        </a>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge popular">
+          <span data-lang="en">Most Popular</span>
+          <span data-lang="es">Más popular</span>
+        </div>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">€4.99<span>/mo</span></div>
+        <p class="pricing-desc">
+          <span data-lang="en">No ads, unlimited AI, and advanced features to maximize your focus and study performance.</span>
+          <span data-lang="es">Sin anuncios, IA ilimitada y funciones avanzadas para maximizar tu concentración y rendimiento.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Everything in Free</span><span data-lang="es">Todo lo de Free</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">No ads, ever</span><span data-lang="es">Sin anuncios, nunca</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Unlimited AI suggestions</span><span data-lang="es">Sugerencias IA ilimitadas</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Advanced app blocking schedules</span><span data-lang="es">Programación avanzada de bloqueo</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Peak productivity insights</span><span data-lang="es">Insights de productividad</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Priority support</span><span data-lang="es">Soporte prioritario</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn primary">
+          <span data-lang="en">Join Waitlist — Pro</span>
+          <span data-lang="es">Únete — Pro</span>
+        </a>
+      </div>
+
+      <!-- EDU -->
+      <div class="pricing-card edu">
+        <div class="pricing-badge uni">
+          <span data-lang="en">For Universities</span>
+          <span data-lang="es">Para universidades</span>
+        </div>
+        <div class="pricing-tier">Edu</div>
+        <div class="pricing-price" data-lang="en">Free<span> for students</span></div>
+        <div class="pricing-price" data-lang="es">Gratis<span> para alumnos</span></div>
+        <p class="pricing-desc">
+          <span data-lang="en">Premium experience covered by your university. Like ChatGPT Edu — but built for focus and study habits.</span>
+          <span data-lang="es">Experiencia premium cubierta por tu universidad. Como ChatGPT Edu — pero diseñado para concentración y hábitos de estudio.</span>
+        </p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Everything in Pro</span><span data-lang="es">Todo lo de Pro</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Direct Moodle / LMS sync</span><span data-lang="es">Sincronización directa con Moodle / LMS</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Course-specific AI coaching</span><span data-lang="es">Coaching IA por asignatura</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Exam prep mode</span><span data-lang="es">Modo preparación de exámenes</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">University wellbeing dashboard</span><span data-lang="es">Panel de bienestar universitario</span></li>
+          <li><span class="pf-icon">✓</span> <span data-lang="en">Paid by your institution</span><span data-lang="es">Lo paga tu institución</span></li>
+        </ul>
+        <a href="#cta" class="pricing-btn edu-btn">
+          <span data-lang="en">Ask Your University</span>
+          <span data-lang="es">Pídelo a tu universidad</span>
+        </a>
+      </div>
+
+    </div>
+    <p class="pricing-note">
+      <span data-lang="en">All plans include calendar sync, AI task breakdown, and app blocking. Edu pricing is negotiated directly with universities.</span>
+      <span data-lang="es">Todos los planes incluyen sincronización de calendario, desglose IA de tareas y bloqueo de apps. El precio Edu se negocia directamente con las universidades.</span>
+    </p>
   </div>
 </section>
 
