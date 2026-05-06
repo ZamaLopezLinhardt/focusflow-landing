@@ -182,6 +182,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .pfl{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
 .pfl li{font-size:13px;display:flex;align-items:flex-start;gap:8px;line-height:1.4}.pfl li.ds{color:var(--txm);opacity:.5}
 .pbt{display:block;width:100%;padding:13px;border-radius:100px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .3s;text-decoration:none;border:none}
+.pbt span{display:none}
+.pbt span[data-l="en"]{display:inline}
+body.es .pbt span[data-l="en"]{display:none}
+body.es .pbt span[data-l="es"]{display:inline}
 .pbt-f{background:var(--ac);color:#fff;box-shadow:0 0 20px var(--acg)}.pbt-f:hover{transform:translateY(-2px);box-shadow:0 4px 30px var(--acg)}
 .pbt-o{background:transparent;color:var(--tx);border:1px solid rgba(255,255,255,.12)}.pbt-o:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04)}
 .pbt-e{background:var(--wm);color:var(--bg);font-weight:700}.pbt-e:hover{transform:translateY(-2px);box-shadow:0 4px 30px var(--wmg)}
@@ -296,9 +300,58 @@ footer .logo{justify-content:center;margin-bottom:10px}
     <span class="svb"><span data-l="en">Save 33%</span><span data-l="es">-33%</span></span>
   </div>
   <div class="pg">
-    <div class="pc rv"><div class="ptier">Free</div><div class="pamt">€0</div><p class="pdsc" data-l="en">Everything to start. Free forever, with ads.</p><p class="pdsc" data-l="es">Todo para empezar. Gratis para siempre, con anuncios.</p><div class="pdiv"></div><ul class="pfl"><li><span>✓</span><span data-l="en">AI micro-tasks</span><span data-l="es">Micro-tareas IA</span></li><li><span>✓</span><span data-l="en">Calendar sync</span><span data-l="es">Sincronización</span></li><li><span>✓</span><span data-l="en">Basic blocking</span><span data-l="es">Bloqueo básico</span></li><li><span>✓</span><span data-l="en">Streaks</span><span data-l="es">Rachas</span></li><li class="ds"><span>—</span><span data-l="en">Ads</span><span data-l="es">Con anuncios</span></li><li class="ds"><span>—</span><span data-l="en">3 AI/day</span><span data-l="es">3 IA/día</span></li></ul><a href="#cb" class="pbt pbt-o" data-l="en">Get Free</a><a href="#cb" class="pbt pbt-o" data-l="es">Gratis</a></div>
-    <div class="pc ft rv rv1"><div class="pbdg pbdg-p"><span data-l="en">Popular</span><span data-l="es">Popular</span></div><div class="ptier">Pro</div><div class="pamt" id="pp">€4.99<span>/mo</span></div><p class="pdsc" data-l="en">No ads, unlimited AI, smart scheduling, insights.</p><p class="pdsc" data-l="es">Sin anuncios, IA ilimitada, planificación, insights.</p><div class="pdiv"></div><ul class="pfl"><li><span>✓</span><span data-l="en">Everything in Free</span><span data-l="es">Todo de Free</span></li><li><span>✓</span><span data-l="en">No ads</span><span data-l="es">Sin anuncios</span></li><li><span>✓</span><span data-l="en">Unlimited AI</span><span data-l="es">IA ilimitada</span></li><li><span>✓</span><span data-l="en">Smart scheduling</span><span data-l="es">Auto-programación</span></li><li><span>✓</span><span data-l="en">Advanced blocking</span><span data-l="es">Bloqueo avanzado</span></li><li><span>✓</span><span data-l="en">Productivity insights</span><span data-l="es">Insights</span></li></ul><a href="#cb" class="pbt pbt-f" data-l="en">Join — Pro</a><a href="#cb" class="pbt pbt-f" data-l="es">Únete — Pro</a></div>
-    <div class="pc ed rv rv2"><div class="pbdg pbdg-u"><span data-l="en">Universities</span><span data-l="es">Universidades</span></div><div class="ptier">Edu</div><div class="pamt" data-l="en">Free<span> for students</span></div><div class="pamt" data-l="es">Gratis<span> para alumnos</span></div><p class="pdsc" data-l="en">Premium covered by your university. Like ChatGPT Edu.</p><p class="pdsc" data-l="es">Premium cubierto por tu universidad. Como ChatGPT Edu.</p><div class="pdiv"></div><ul class="pfl"><li><span>✓</span><span data-l="en">Everything in Pro</span><span data-l="es">Todo de Pro</span></li><li><span>✓</span><span data-l="en">Moodle/LMS sync</span><span data-l="es">Moodle/LMS</span></li><li><span>✓</span><span data-l="en">Course AI coaching</span><span data-l="es">Coaching por asignatura</span></li><li><span>✓</span><span data-l="en">Exam prep mode</span><span data-l="es">Modo exámenes</span></li><li><span>✓</span><span data-l="en">Wellbeing dashboard</span><span data-l="es">Panel bienestar</span></li><li><span>✓</span><span data-l="en">Institution pays</span><span data-l="es">Lo paga la institución</span></li></ul><a href="#cb" class="pbt pbt-e" data-l="en">Ask Your Uni</a><a href="#cb" class="pbt pbt-e" data-l="es">Pídelo a tu uni</a></div>
+    <div class="pc rv">
+      <div class="ptier">Free</div>
+      <div class="pamt">€0</div>
+      <p class="pdsc" data-l="en">Everything to start. Free forever, with ads.</p>
+      <p class="pdsc" data-l="es">Todo para empezar. Gratis para siempre, con anuncios.</p>
+      <div class="pdiv"></div>
+      <ul class="pfl">
+        <li><span>✓</span><span data-l="en">AI micro-tasks</span><span data-l="es">Micro-tareas IA</span></li>
+        <li><span>✓</span><span data-l="en">Calendar sync</span><span data-l="es">Sincronización</span></li>
+        <li><span>✓</span><span data-l="en">Basic blocking</span><span data-l="es">Bloqueo básico</span></li>
+        <li><span>✓</span><span data-l="en">Streaks</span><span data-l="es">Rachas</span></li>
+        <li class="ds"><span>—</span><span data-l="en">Ads</span><span data-l="es">Con anuncios</span></li>
+        <li class="ds"><span>—</span><span data-l="en">3 AI/day</span><span data-l="es">3 IA/día</span></li>
+      </ul>
+      <button class="pbt pbt-o"><span data-l="en">Get Free</span><span data-l="es">Gratis</span></button>
+    </div>
+    
+    <div class="pc ft rv rv1">
+      <div class="pbdg pbdg-p"><span data-l="en">Popular</span><span data-l="es">Popular</span></div>
+      <div class="ptier">Pro</div>
+      <div class="pamt" id="pp">€4.99<span>/mo</span></div>
+      <p class="pdsc" data-l="en">No ads, unlimited AI, smart scheduling, insights.</p>
+      <p class="pdsc" data-l="es">Sin anuncios, IA ilimitada, planificación, insights.</p>
+      <div class="pdiv"></div>
+      <ul class="pfl">
+        <li><span>✓</span><span data-l="en">Everything in Free</span><span data-l="es">Todo de Free</span></li>
+        <li><span>✓</span><span data-l="en">No ads</span><span data-l="es">Sin anuncios</span></li>
+        <li><span>✓</span><span data-l="en">Unlimited AI</span><span data-l="es">IA ilimitada</span></li>
+        <li><span>✓</span><span data-l="en">Smart scheduling</span><span data-l="es">Auto-programación</span></li>
+        <li><span>✓</span><span data-l="en">Advanced blocking</span><span data-l="es">Bloqueo avanzado</span></li>
+        <li><span>✓</span><span data-l="en">Productivity insights</span><span data-l="es">Insights</span></li>
+      </ul>
+      <button class="pbt pbt-f"><span data-l="en">Join — Pro</span><span data-l="es">Únete — Pro</span></button>
+    </div>
+    
+    <div class="pc ed rv rv2">
+      <div class="pbdg pbdg-u"><span data-l="en">Universities</span><span data-l="es">Universidades</span></div>
+      <div class="ptier">Edu</div>
+      <div class="pamt"><span data-l="en">Free<span style="font-size:16px"> for students</span></span><span data-l="es">Gratis<span style="font-size:16px"> para alumnos</span></span></div>
+      <p class="pdsc" data-l="en">Premium covered by your university. Like ChatGPT Edu.</p>
+      <p class="pdsc" data-l="es">Premium cubierto por tu universidad. Como ChatGPT Edu.</p>
+      <div class="pdiv"></div>
+      <ul class="pfl">
+        <li><span>✓</span><span data-l="en">Everything in Pro</span><span data-l="es">Todo de Pro</span></li>
+        <li><span>✓</span><span data-l="en">Moodle/LMS sync</span><span data-l="es">Moodle/LMS</span></li>
+        <li><span>✓</span><span data-l="en">Course AI coaching</span><span data-l="es">Coaching por asignatura</span></li>
+        <li><span>✓</span><span data-l="en">Exam prep mode</span><span data-l="es">Modo exámenes</span></li>
+        <li><span>✓</span><span data-l="en">Wellbeing dashboard</span><span data-l="es">Panel bienestar</span></li>
+        <li><span>✓</span><span data-l="en">Institution pays</span><span data-l="es">Lo paga la institución</span></li>
+      </ul>
+      <button class="pbt pbt-e"><span data-l="en">Ask Your Uni</span><span data-l="es">Pídelo a tu uni</span></button>
+    </div>
   </div>
 </div></section>
 
@@ -334,5 +387,6 @@ let ia=false;function tp(){ia=!ia;up()}function sp(p){ia=p==='a';up()}function u
 function ac(){const el=document.getElementById('cnt');const tgt=ec;let cur=0;const st=Math.ceil(tgt/60);const i=setInterval(()=>{cur+=st;if(cur>=tgt){cur=tgt;clearInterval(i)}el.textContent=cur.toLocaleString()},16)}
 setTimeout(ac,500);
 </script>
+
 </body>
 </html>
